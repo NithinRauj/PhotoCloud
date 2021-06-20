@@ -17,15 +17,17 @@ const StyledButton = styled.button`
     }
 `;
 
-const Button = ({ width, height, bgColor, textColor, text }) => {
+const Button = ({ width, height, bgColor, textColor, text, onClick, isDisabled }) => {
     return (
         <StyledButton
             width={width}
             height={height}
             bgColor={bgColor}
             textColor={textColor}
+            onClick={onClick}
+            disabled={isDisabled}
         >
-            <Text>{text}</Text>
+            <Text color={'white'}>{text}</Text>
         </StyledButton>
     )
 }
@@ -35,7 +37,9 @@ Button.propTypes = {
     height: PropTypes.string,
     bgColor: PropTypes.string,
     textColor: PropTypes.string,
-    text: PropTypes.string
+    text: PropTypes.string,
+    onClick: PropTypes.func,
+    isDisabled: PropTypes.bool
 };
 
 export default Button

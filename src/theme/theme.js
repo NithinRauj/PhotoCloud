@@ -24,6 +24,7 @@ export const theme = {
         lightAccent: '#A5A197',
         main: '#808C9A',
         darkAccent: '#9C927D',
-        darkShades: '#2A252F'
+        darkShades: '#2A252F',
+        error: '#FF0000'
     }
 }

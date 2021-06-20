@@ -7,6 +7,7 @@ const Text = styled.label`
     font-weight:${props => props.theme.weight[props.weight]};
     text-align: ${props => props.align};
     cursor: ${props => props.cursor};
+    color:${props => props.theme.color[props.color]}
 `;
 
 export default Text;
@@ -15,11 +16,13 @@ Text.propTypes = {
     size: PropTypes.string,
     weight: PropTypes.string,
     align: PropTypes.string,
-    cursor: PropTypes.string
+    cursor: PropTypes.string,
+    color: PropTypes.string
 };
 
 Text.defaultProps = {
     size: 'small',
     weight: 'regular',
-    cursor: 'default'
+    cursor: 'default',
+    color: 'black'
 };

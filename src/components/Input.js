@@ -11,17 +11,16 @@ const StyledInput = styled.input`
     font-size: ${props => props.theme.size.small};
 `;
 
-const Input = ({ type, name, value, onChange, placeholder }) => {
+const Input = ({ type, name, placeholder, reference }) => {
     return (
-        <StyledInput type={type} name={name} placeholder={placeholder} value={value} onChange={(e) => onChange(e, name)} />
+        <StyledInput type={type} name={name} ref={reference} placeholder={placeholder} />
     )
 }
 
 Input.propTypes = {
+    reference: PropTypes.object,
     type: PropTypes.string,
-    name: PropTypes.string,
-    value: PropTypes.string,
-    onChange: PropTypes.func
+    name: PropTypes.string
 }
 
 export default Input

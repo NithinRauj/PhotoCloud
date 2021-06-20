@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const FormBox = styled.div`
     width: 500px;
+    max-width: 500px;
     height: 550px;
     background-color: ${props => props.theme.color.lightShade};
     position: absolute;
