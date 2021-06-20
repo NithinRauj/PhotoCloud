@@ -13,7 +13,7 @@ const StyledButton = styled.button`
     box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
     cursor: pointer;
     ${Text}{
-        cursor: pointer;
+        cursor: inherit;
     }
 `;
 

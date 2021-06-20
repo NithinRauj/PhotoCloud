@@ -5,7 +5,7 @@ import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
 
-const SignupPage = () => {
+const SignupPage = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rePassword, setRePassword] = useState('');
@@ -26,6 +26,11 @@ const SignupPage = () => {
         }
     }
 
+    const goTo = (path) => {
+        const { history } = props;
+        history.push(path);
+    }
+
     return (
         <Fragment>
             <Background />
@@ -37,7 +42,11 @@ const SignupPage = () => {
                     <Input type='password' name='password' placeholder='Password' value={password} onChange={onChange} />
                     <Input type='password' name='re-password' placeholder='Reenter Password' value={rePassword} onChange={onChange} />
                     <Button width={'130px'} height={'large'} text={'Sign Up'} bgColor={'main'} textColor={'lightShade'} />
-                    <Text size={'xs'}>Already have an account? Sign In</Text>
+                    <Text size={'xs'}>Already have an account?{' '}
+                        <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signin')}>
+                            Sign In
+                        </Text>
+                    </Text>
                 </Content>
             </FormBox>
         </Fragment>

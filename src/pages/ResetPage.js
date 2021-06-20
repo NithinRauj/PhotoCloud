@@ -5,12 +5,17 @@ import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
 
-const ResetPage = () => {
+const ResetPage = (props) => {
     const [email, setEmail] = useState('');
 
     const onChange = (e) => {
         const value = e.target.value;
         setEmail(value);
+    }
+
+    const goTo = (path) => {
+        const { history } = props;
+        history.push(path);
     }
 
     return (
@@ -23,7 +28,7 @@ const ResetPage = () => {
                     <Text size={'xs'}>Please enter the registered email address to recover your password</Text>
                     <Input type='email' name='email' placeholder='Email' value={email} onChange={onChange} />
                     <Button width={'150px'} height={'large'} text={'Reset Password'} bgColor={'main'} textColor={'lightShade'} />
-                    <Text size={'xs'}>Go back to Sign In</Text>
+                    <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signin')}>Go back to Sign In</Text>
                 </Content>
             </FormBox>
         </Fragment>
