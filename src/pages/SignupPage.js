@@ -33,6 +33,7 @@ const SignupPage = (props) => {
             setLoading(true);
             setError('');
             await onSignup(email, password);
+            goTo('/');
         } catch (err) {
             console.log(err);
             setError('Failed to create account');
