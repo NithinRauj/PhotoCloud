@@ -1,10 +1,9 @@
-import { DarkShades } from '../theme/colors';
 import styled from 'styled-components';
 
 export const Background = styled.div`
     width: 100%;
     height: 100vh;
-    background-color: ${DarkShades};
+    background-color:${props => props.theme.color['darkShades']};
 `;
 
 export default Background

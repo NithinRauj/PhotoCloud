@@ -23,6 +23,8 @@ const Dashboard = ({ history }) => {
             {error && <Text color='error'>{error}</Text>}
             <Button width={'130px'} height={'large'} text={'Sign Out'}
                 bgColor={'main'} textColor={'lightShade'} onClick={signOut} />
+            <Button width={'170px'} height={'large'} text={'Update Profile'}
+                bgColor={'main'} textColor={'lightShade'} onClick={() => history.push('/update-profile')} />
         </div>
     )
 }

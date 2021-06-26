@@ -1,21 +1,35 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, createRef, useState } from 'react';
 import { FormBox, Content } from '../components/AuthComponents'
 import Background from '../components/Background';
 import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 const ResetPage = (props) => {
-    const [email, setEmail] = useState('');
-
-    const onChange = (e) => {
-        const value = e.target.value;
-        setEmail(value);
-    }
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+    const emailRef = createRef();
+    const { resetPassword } = useAuth()
 
     const goTo = (path) => {
         const { history } = props;
         history.push(path);
+    }
+
+    const onReset = async () => {
+        setError('');
+        if (!emailRef.current.value) {
+            setError('Email field is mandatory');
+        } else {
+            try {
+                setError('');
+                await resetPassword(emailRef.current.value);
+                setMessage('Check your mail to reset passowrd');
+            } catch (err) {
+                setError('Unable to reset password');
+            }
+        }
     }
 
     return (
@@ -25,9 +39,11 @@ const ResetPage = (props) => {
                 <Content>
                     <Text size={'2xl'} weight={'medium'}>PhotoCloud</Text>
                     <Text size={'medium'} weight={'medium'} margin={'0px 20px'}>Reset Password</Text>
-                    <Text size={'xs'}>Please enter the registered email address to recover your password</Text>
-                    <Input type='email' name='email' placeholder='Email' value={email} onChange={onChange} />
-                    <Button width={'150px'} height={'large'} text={'Reset Password'} bgColor={'main'} textColor={'lightShade'} />
+                    {error && <Text color={'error'}>{error}</Text>}
+                    {message && <Text color={'success'}>{message}</Text>}
+                    <Text size={'xs'}>Please enter the email address to recover your password</Text>
+                    <Input type='email' name='email' placeholder='Email' reference={emailRef} />
+                    <Button width={'150px'} height={'large'} text={'Reset Password'} bgColor={'main'} textColor={'lightShade'} onClick={onReset} />
                     <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signin')}>Go back to Sign In</Text>
                 </Content>
             </FormBox>
