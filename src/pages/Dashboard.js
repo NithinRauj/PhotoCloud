@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import Button from '../components/Button';
 import Text from '../components/Text';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppState } from '../contexts/AppContext';
+import { auth } from '../firebase/firebase-config';
 
 const Dashboard = ({ history }) => {
-    const { currentUser, onSignout } = useAuth();
+    const { currentUser } = useAppState();
     const [error, setError] = useState('');
 
     const signOut = async () => {
         try {
-            await onSignout();
+            await auth.signOut();
             history.push('/signin');
         } catch (err) {
             setError('Sign Out failed');

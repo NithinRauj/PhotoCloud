@@ -4,7 +4,7 @@ import Background from '../components/Background';
 import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
-import { useAuth } from '../contexts/AuthContext';
+import { auth } from '../firebase/firebase-config';
 
 const SignupPage = (props) => {
     const emailRef = createRef();
@@ -12,7 +12,6 @@ const SignupPage = (props) => {
     const rePasswordRef = createRef();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { onSignup } = useAuth();
 
     const goTo = (path) => {
         const { history } = props;
@@ -32,7 +31,7 @@ const SignupPage = (props) => {
         try {
             setLoading(true);
             setError('');
-            await onSignup(email, password);
+            await auth.createUserWithEmailAndPassword(email, password);
             goTo('/');
         } catch (err) {
             console.log(err);

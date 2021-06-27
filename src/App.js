@@ -4,7 +4,7 @@ import SignupPage from './pages/SignupPage';
 import SigninPage from './pages/SigninPage';
 import ResetPage from './pages/ResetPage';
 import NotFound from './pages/NotFound';
-import { AuthProvider } from './contexts/AuthContext';
+import { ContextProvider } from './contexts/AppContext';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import UpdateProfile from './pages/UpdateProfile';
@@ -13,7 +13,7 @@ class App extends Component {
 
   render() {
     return (
-      <AuthProvider>
+      <ContextProvider>
         <Switch>
           <PrivateRoute exact path='/' component={Dashboard} />
           <PrivateRoute exact path='/update-profile' component={UpdateProfile} />
@@ -22,7 +22,7 @@ class App extends Component {
           <Route exact path='/reset' component={ResetPage} />
           <Route component={NotFound} />
         </Switch>
-      </AuthProvider>
+      </ContextProvider>
     )
   }
 }

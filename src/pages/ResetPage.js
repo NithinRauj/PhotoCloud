@@ -4,13 +4,12 @@ import Background from '../components/Background';
 import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
-import { useAuth } from '../contexts/AuthContext';
+import { auth } from '../firebase/firebase-config';
 
 const ResetPage = (props) => {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const emailRef = createRef();
-    const { resetPassword } = useAuth()
 
     const goTo = (path) => {
         const { history } = props;
@@ -24,7 +23,7 @@ const ResetPage = (props) => {
         } else {
             try {
                 setError('');
-                await resetPassword(emailRef.current.value);
+                await auth.sendPasswordResetEmail(emailRef.current.value);
                 setMessage('Check your mail to reset passowrd');
             } catch (err) {
                 setError('Unable to reset password');

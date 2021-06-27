@@ -4,7 +4,7 @@ import Background from '../components/Background';
 import Input from '../components/Input';
 import Text from '../components/Text';
 import Button from '../components/Button';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppState } from '../contexts/AppContext';
 
 const UpdateProfile = (props) => {
     const emailRef = createRef();
@@ -12,7 +12,7 @@ const UpdateProfile = (props) => {
     const rePasswordRef = createRef();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { currentUser, updateEmail, updatePassword } = useAuth();
+    const { currentUser } = useAppState();
 
     const goTo = (path) => {
         const { history } = props;
@@ -31,10 +31,10 @@ const UpdateProfile = (props) => {
 
         try {
             if (email) {
-                await updateEmail(email);
+                await currentUser.updateEmail(email);
             }
             if (password) {
-                await updatePassword(password);
+                await currentUser.updatePassword(password);
             }
             goTo('/');
         } catch (err) {
