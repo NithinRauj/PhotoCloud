@@ -6,7 +6,7 @@ import Text from '../components/Text';
 import Button from '../components/Button';
 import { auth } from '../firebase/firebase-config';
 
-const ResetPage = (props) => {
+const ResetPassword = (props) => {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const emailRef = createRef();
@@ -50,4 +50,4 @@ const ResetPage = (props) => {
     )
 }
 
-export default ResetPage
+export default ResetPassword

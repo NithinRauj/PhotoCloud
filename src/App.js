@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom'
-import SignupPage from './pages/SignupPage';
-import SigninPage from './pages/SigninPage';
-import ResetPage from './pages/ResetPage';
+import Signup from './pages/Signup';
+import Signin from './pages/Signin';
+import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import { ContextProvider } from './contexts/AppContext';
 import Dashboard from './pages/Dashboard';
@@ -17,9 +17,9 @@ class App extends Component {
         <Switch>
           <PrivateRoute exact path='/' component={Dashboard} />
           <PrivateRoute exact path='/update-profile' component={UpdateProfile} />
-          <Route exact path='/signup' component={SignupPage} />
-          <Route exact path='/signin' component={SigninPage} />
-          <Route exact path='/reset' component={ResetPage} />
+          <Route exact path='/signup' component={Signup} />
+          <Route exact path='/signin' component={Signin} />
+          <Route exact path='/reset' component={ResetPassword} />
           <Route component={NotFound} />
         </Switch>
       </ContextProvider>
