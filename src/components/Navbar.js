@@ -16,6 +16,7 @@ const NavRoot = styled.div`
     }
     ${Text}{
         padding:0px 5px;
+        margin:0px 25px;
     }
 `;
 
@@ -35,8 +36,8 @@ const Navbar = () => {
     return (
         <NavRoot>
             <Text size={'medium'} color={'lightShade'}>PhotoCloud</Text>
-            <Text size={'small'} color={'lightShade'} cursor={'pointer'} onClick={() => history.push('/update-profile')}>My Profile</Text>
-            <Text size={'small'} color={'lightShade'} cursor={'pointer'} onClick={signOut}>Signout</Text>
+            <Text size={'xs'} color={'lightShade'} cursor={'pointer'} onClick={() => history.push('/update-profile')}>My Profile</Text>
+            <Text size={'xs'} color={'lightShade'} cursor={'pointer'} onClick={signOut}>Signout</Text>
         </NavRoot>
     )
 }
