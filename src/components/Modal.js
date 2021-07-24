@@ -7,9 +7,8 @@ import Button from './Button';
 const Overlay = styled.div`
     width: 100vw;
     height: 100vh;
-    background-color: ${props => props.theme.color.black};
-    opacity: 0.8;
-    position: absolute;
+    background-color:rgba(0,0,0,0.8);
+    position: fixed;
     z-index: 10;
 `;
 

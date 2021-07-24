@@ -1,30 +1,44 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
+import { Loader } from '../components/Loader';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
+import Photo, { PhotosGrid } from '../components/Photo';
+import { UploadButton } from '../components/UploadButton';
 import { useAppState } from '../contexts/AppContext';
 import { storage } from '../firebase/firebase-config';
 
-const UploadButton = styled.label`
-    display: flex;
-    position: fixed;
-    right:20px;
-    bottom: 20px;
-    background-color: ${props => props.theme.color.darkAccent};
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    font-family: Ubuntu,sans-serif;
-    font-size:${props => props.theme.size['x-base']};
-    font-weight: ${props => props.theme.weight.bold};
+const Header = styled.div`
+    font-family: 'Ubuntu';
+    font-size: ${props => props.theme.size['x-base']};
+    margin: 20px 20px 0px;
 `;
 
 const Dashboard = () => {
     const rootRef = storage.ref().child('images');
     const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [images, setImages] = useState([]);
     const [modalProps, setModalProps] = useState({});
     const { currentUser } = useAppState();
+
+    useEffect(() => {
+        fetchPhotos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const fetchPhotos = () => {
+        setLoading(true);
+        const dirRef = storage.ref().child(`images/${currentUser.uid}`);
+        dirRef.listAll()
+            .then(res => {
+                setImages([]);
+                setImageItems(res);
+            })
+            .catch(err => {
+                console.log('List images error', err);
+            });
+    }
 
     const setModalProperties = (props) => {
         setModalProps(prevProps => {
@@ -32,6 +46,29 @@ const Dashboard = () => {
                 ...prevProps,
                 ...props
             }
+        });
+    }
+
+    const setImageItems = (res) => {
+        const totalItems = res.items.length
+        let count = 0;
+        res.items.forEach((img) => {
+            img.getDownloadURL()
+                .then((url) => {
+                    setImages(prevProps => {
+                        return [...prevProps, {
+                            name: img.name,
+                            url
+                        }]
+                    })
+                    count++;
+                    if (count === totalItems) {
+                        setLoading(false);
+                    }
+                })
+                .catch(err => {
+                    console.log('URL fetch error', err);
+                });
         });
     }
 
@@ -48,10 +85,10 @@ const Dashboard = () => {
             return;
         }
         setFile(file);
-        initiateUpload(e);
+        initiateUpload(e, file);
     }
 
-    const initiateUpload = (e) => {
+    const initiateUpload = (e, file) => {
         const imageRef = rootRef.child(`${currentUser.uid}/${file.name}`);
         const uploadTask = imageRef.put(file);
         uploadTask.on('state_changed', (snapshot) => {
@@ -96,6 +133,7 @@ const Dashboard = () => {
                     buttonText: 'Okay',
                     onButtonClick: closeModal
                 });
+                fetchPhotos();
             });
     }
 
@@ -115,12 +153,20 @@ const Dashboard = () => {
         });
     }
 
-    const { isVisible, text, buttonText, onButtonClick } = modalProps
+    const { isVisible, text, buttonText, onButtonClick } = modalProps;
+    const userName = currentUser.email.split('@')[0];
     return (
         <>
             {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
             <Navbar />
-            Hey {currentUser && currentUser.email} 👋
+            {currentUser && <Header>Welcome {userName}</Header>}
+            {loading ?
+                <Loader /> :
+                <PhotosGrid>
+                    {images.length && images.map(img => {
+                        return <Photo src={img.url} alt={img.name} key={img.name} />
+                    })}
+                </PhotosGrid>}
             <input type='file' id='upload-btn' accept={'.jpg,.png'} hidden onChange={onFileSelect} />
             <UploadButton htmlFor='upload-btn'><span className="material-icons">file_upload</span> Upload </UploadButton>
         </>
@@ -128,5 +174,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard;
-
-
