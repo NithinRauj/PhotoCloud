@@ -18,10 +18,27 @@ const PreviewImage = styled.img`
 `;
 
 export default function Lightbox({ currentImage, onClose, onNextAction, onPrevAction }) {
+
+    async function onDownload() {
+        const imgSrc = await fetch(currentImage.url);
+        const blob = await imgSrc.blob();
+        const imageURL = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = imageURL;
+        link.download = currentImage.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     return (
         <Overlay>
             <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '40px', cursor: 'pointer' }}>
                 cancel
+            </span>
+            <span className="material-icons" onClick={onDownload} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '12px', right: '100px', cursor: 'pointer' }}>
+                download
             </span>
             <Root>
                 <span className="material-icons" style={{ color: 'grey', fontSize: '65px', cursor: 'pointer', userSelect: 'none' }} onClick={onPrevAction}>
