@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
+import Lightbox from '../components/Lightbox';
 import { Loader } from '../components/Loader';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
@@ -19,6 +20,8 @@ const Dashboard = () => {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState([]);
+    const [previewImageIndex, setPreviewIndex] = useState(null);
+    const [isPreviewMode, togglePreviewMode] = useState(false);
     const [modalProps, setModalProps] = useState({});
     const { currentUser } = useAppState();
 
@@ -153,18 +156,46 @@ const Dashboard = () => {
         });
     }
 
+    const openPreview = (index) => {
+        setPreviewIndex(index);
+        togglePreviewMode(true);
+    }
+
+    const closePreview = () => {
+        togglePreviewMode(false);
+    }
+
+    const showNextImage = () => {
+        const nextIndex = previewImageIndex + 1;
+        setPreviewIndex(nextIndex >= images.length ? 0 : nextIndex);
+    }
+
+    const showPrevImage = () => {
+        const prevIndex = previewImageIndex - 1;
+        setPreviewIndex(prevIndex < 0 ? images.length - 1 : prevIndex);
+
+    }
+
     const { isVisible, text, buttonText, onButtonClick } = modalProps;
     const userName = currentUser.email.split('@')[0];
     return (
         <>
             {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
+            {isPreviewMode &&
+                <Lightbox
+                    currentImage={images[previewImageIndex]}
+                    onClose={closePreview}
+                    onNextAction={showNextImage}
+                    onPrevAction={showPrevImage}
+                />
+            }
             <Navbar />
             {currentUser && <Header>Welcome {userName}</Header>}
             {loading ?
                 <Loader /> :
                 <PhotosGrid>
-                    {images.length && images.map(img => {
-                        return <Photo src={img.url} alt={img.name} key={img.name} />
+                    {images.length && images.map((img, index) => {
+                        return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
                     })}
                 </PhotosGrid>}
             <input type='file' id='upload-btn' accept={'.jpg,.png'} hidden onChange={onFileSelect} />

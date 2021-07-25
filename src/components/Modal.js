@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import Text from './Text';
 import Button from './Button';
 
-const Overlay = styled.div`
+export const Overlay = styled.div`
     width: 100vw;
     height: 100vh;
-    background-color:rgba(0,0,0,0.8);
+    background-color:rgba(0,0,0,0.9);
     position: fixed;
     z-index: 10;
 `;

@@ -16,16 +16,21 @@ const Image = styled.img`
     overflow: hidden;
     object-fit: contain;
     cursor: pointer;
+    &:hover{
+        transform: scale(1.1,1.1)
+    }
+    transition: transform 0.5s;
 `;
 
-const Photo = ({ src }) => {
+const Photo = ({ src, onClickAction }) => {
     return (
-        <Image src={src} />
+        <Image src={src} onClick={onClickAction} />
     )
 }
 
 Photo.propTypes = {
     src: PropTypes.string,
+    onClickAction: PropTypes.func
 }
 
 export default Photo
