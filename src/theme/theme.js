@@ -26,6 +26,7 @@ export const theme = {
         darkAccent: '#9C927D',
         darkShades: '#2A252F',
         error: '#FF0000',
-        success: '#00FF00'
+        success: '#00FF00',
+        grey: '#808080'
     }
 }
