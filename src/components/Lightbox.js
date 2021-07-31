@@ -17,7 +17,7 @@ const PreviewImage = styled.img`
     object-fit: contain;
 `;
 
-export default function Lightbox({ currentImage, onClose, onNextAction, onPrevAction }) {
+export default function Lightbox({ currentImage, onClose, onDelete, onNextAction, onPrevAction }) {
 
     async function onDownload() {
         const imgSrc = await fetch(currentImage.url);
@@ -34,10 +34,13 @@ export default function Lightbox({ currentImage, onClose, onNextAction, onPrevAc
 
     return (
         <Overlay>
-            <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '40px', cursor: 'pointer' }}>
+            <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '50px', cursor: 'pointer' }}>
                 cancel
             </span>
-            <span className="material-icons" onClick={onDownload} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '12px', right: '100px', cursor: 'pointer' }}>
+            <span className="material-icons" onClick={onDelete} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '100px', cursor: 'pointer' }}>
+                delete
+            </span>
+            <span className="material-icons" onClick={onDownload} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '12px', right: '150px', cursor: 'pointer' }}>
                 download
             </span>
             <Root>
@@ -55,7 +58,8 @@ export default function Lightbox({ currentImage, onClose, onNextAction, onPrevAc
 
 Lightbox.propTypes = {
     currrentImage: PropTypes.string,
-    onClick: PropTypes.func,
+    onClose: PropTypes.func,
+    onDelete: PropTypes.func,
     onPrevAction: PropTypes.func,
     onNextAction: PropTypes.func
 };

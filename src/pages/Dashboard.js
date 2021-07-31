@@ -147,6 +147,29 @@ const Dashboard = () => {
         }
     }
 
+    const deletePhoto = () => {
+        const imgName = images[previewImageIndex].name;
+        const imgRef = storage.ref().child(`images/${currentUser.uid}/${imgName}`);
+        imgRef.delete()
+            .then(() => {
+                console.log('Deleted the photo');
+                const imageItems = images;
+                imageItems.splice(previewImageIndex, 1);
+                setImages(imageItems);
+                togglePreviewMode(false);
+            })
+            .catch((err) => {
+                console.log('Error deleting the photo', err);
+                togglePreviewMode(false);
+                setModalProperties({
+                    isVisible: true,
+                    text: `Delete Failed.Please try again`,
+                    buttonText: 'Okay',
+                    onButtonClick: closeModal
+                });
+            });
+    }
+
     const closeModal = () => {
         setModalProps(prevProps => {
             return {
@@ -187,6 +210,7 @@ const Dashboard = () => {
                     onClose={closePreview}
                     onNextAction={showNextImage}
                     onPrevAction={showPrevImage}
+                    onDelete={deletePhoto}
                 />
             }
             <Navbar />
