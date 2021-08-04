@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components';
 import Lightbox from '../components/Lightbox';
 import { Loader } from '../components/Loader';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
+import NoImagesFound from '../components/NoImagesFound';
 import Photo, { PhotosGrid } from '../components/Photo';
 import { UploadButton } from '../components/UploadButton';
 import { useAppState } from '../contexts/AppContext';
 import { storage } from '../firebase/firebase-config';
-
-const Header = styled.div`
-    font-family: 'Ubuntu';
-    font-size: ${props => props.theme.size['x-base']};
-    margin: 20px 20px 0px;
-`;
 
 const Dashboard = () => {
     const rootRef = storage.ref().child('images');
@@ -35,8 +29,13 @@ const Dashboard = () => {
         const dirRef = storage.ref().child(`images/${currentUser.uid}`);
         dirRef.listAll()
             .then(res => {
-                setImages([]);
-                setImageItems(res);
+                if (res.items.length > 0) {
+                    setImages([]);
+                    setImageItems(res);
+                } else {
+                    setImages([]);
+                    setLoading(false);
+                }
             })
             .catch(err => {
                 console.log('List images error', err);
@@ -200,7 +199,6 @@ const Dashboard = () => {
     }
 
     const { isVisible, text, buttonText, onButtonClick } = modalProps;
-    const userName = currentUser.email.split('@')[0];
     return (
         <>
             {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
@@ -214,13 +212,14 @@ const Dashboard = () => {
                 />
             }
             <Navbar />
-            {currentUser && <Header>Welcome {userName}</Header>}
             {loading ?
                 <Loader /> :
                 <PhotosGrid>
-                    {images.length && images.map((img, index) => {
+                    {images.length ? images.map((img, index) => {
                         return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
-                    })}
+                    })
+                        : <NoImagesFound />
+                    }
                 </PhotosGrid>}
             <input type='file' id='upload-btn' accept={'.jpg,.png'} hidden onChange={onFileSelect} />
             <UploadButton htmlFor='upload-btn'><span className="material-icons">file_upload</span> Upload </UploadButton>
