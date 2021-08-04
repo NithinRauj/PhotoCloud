@@ -214,7 +214,7 @@ const Dashboard = () => {
             <Navbar />
             {loading ?
                 <Loader /> :
-                <PhotosGrid>
+                <PhotosGrid useAutoFit={images.length > 2}>
                     {images.length ? images.map((img, index) => {
                         return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
                     })
