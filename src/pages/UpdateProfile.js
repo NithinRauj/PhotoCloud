@@ -52,12 +52,12 @@ const UpdateProfile = (props) => {
                     <Text size={'medium'} weight={'medium'}>Update Profile</Text>
                     {error && <Text color={'error'}>{error}</Text>}
                     <Input type='email' name='email' placeholder={currentUser.email} reference={emailRef} />
-                    <Input type='password' name='password' placeholder='Leave it blank to remain same' reference={passwordRef} />
-                    <Input type='password' name='re-password' placeholder='Leave it blank to remain same' reference={rePasswordRef} />
+                    <Input type='password' name='password' placeholder='Leave password blank to remain same' reference={passwordRef} />
+                    <Input type='password' name='re-password' placeholder='Leave password blank to remain same' reference={rePasswordRef} />
                     <Button width={'130px'} height={'large'} text={'Update'} isDisabled={loading}
-                        bgColor={'main'} textColor={'lightShade'} onClick={onSubmit} />
+                        bgColor={'darkShade'} textColor={'lightShade'} onClick={onSubmit} />
                     <Button width={'130px'} height={'large'} text={'Cancel'} isDisabled={loading}
-                        bgColor={'main'} textColor={'lightShade'} onClick={() => goTo('/')} />
+                        bgColor={'darkShade'} textColor={'lightShade'} onClick={() => goTo('/')} />
                 </Content>
             </FormBox>
         </Fragment>

@@ -51,7 +51,7 @@ const Signup = (props) => {
                     <Input type='password' name='password' placeholder='Password' reference={passwordRef} />
                     <Input type='password' name='re-password' placeholder='Reenter Password' reference={rePasswordRef} />
                     <Button width={'130px'} height={'large'} text={'Sign Up'} isDisabled={loading}
-                        bgColor={'main'} textColor={'lightShade'} onClick={onSubmit} />
+                        bgColor={'darkShade'} textColor={'lightShade'} onClick={onSubmit} />
                     <Text size={'xs'}>Already have an account?{' '}
                         <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signin')}>
                             Sign In

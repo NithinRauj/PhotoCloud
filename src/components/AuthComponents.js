@@ -4,7 +4,7 @@ export const FormBox = styled.div`
     width: 500px;
     max-width: 500px;
     height: 550px;
-    background-color: ${props => props.theme.color.lightShade};
+    border:${props => `4px solid ${props.theme.color.darkShade}`};
     position: absolute;
     top: 50%;
     left: 50%;

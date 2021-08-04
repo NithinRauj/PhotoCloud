@@ -7,7 +7,7 @@ import Text from './Text';
 const NavRoot = styled.div`
     width:100%;
     height:50px;
-    background-color: ${props => props.theme.color.darkShades};
+    background-color: ${props => props.theme.color.darkShade};
     display: flex;
     justify-content: flex-start;
     align-items: center;

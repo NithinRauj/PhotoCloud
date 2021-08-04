@@ -47,7 +47,7 @@ const Signin = (props) => {
                     <Input type='password' name='password' placeholder='Password' reference={passwordRef} />
                     <Text size={'xs'} cursor={'pointer'} onClick={() => goTo('/reset')}>Reset Password</Text>
                     <Button width={'130px'} height={'large'} text={'Sign In'} isDisabled={loading}
-                        bgColor={'main'} textColor={'lightShade'} onClick={onSubmit} />
+                        bgColor={'darkShade'} textColor={'lightShade'} onClick={onSubmit} />
                     <Text size={'xs'}>Don’t have an account?{' '}
                         <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signup')}>
                             Sign Up

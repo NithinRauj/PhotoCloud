@@ -35,7 +35,7 @@ export default function Lightbox({ currentImage, onClose, onDelete, onNextAction
 
     return (
         <Overlay>
-            <Text size={'x-base'} color={'grey'} style={{ position: 'absolute', top: '10px', left: '25px' }}>{currentImage.name}</Text>
+            <Text size={'x-base'} color={'grey'} style={{ position: 'absolute', top: '12px', left: '25px' }}>{currentImage.name}</Text>
             <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '50px', cursor: 'pointer' }}>
                 cancel
             </span>

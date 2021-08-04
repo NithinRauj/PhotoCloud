@@ -42,7 +42,7 @@ const ResetPassword = (props) => {
                     {message && <Text color={'success'}>{message}</Text>}
                     <Text size={'xs'}>Please enter the email address to recover your password</Text>
                     <Input type='email' name='email' placeholder='Email' reference={emailRef} />
-                    <Button width={'150px'} height={'large'} text={'Reset Password'} bgColor={'main'} textColor={'lightShade'} onClick={onReset} />
+                    <Button width={'150px'} height={'large'} text={'Reset Password'} bgColor={'darkShade'} textColor={'lightShade'} onClick={onReset} />
                     <Text size={'xs'} weight={'bold'} cursor={'pointer'} onClick={() => goTo('/signin')}>Go back to Sign In</Text>
                 </Content>
             </FormBox>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 export const PhotosGrid = styled.div`
-    margin: 0px 25px 25px;
+    margin: 25px 25px 25px;
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(350px,1fr));
     grid-gap: 5px;
