@@ -6,17 +6,18 @@ import Navbar from '../components/Navbar';
 import NoImagesFound from '../components/NoImagesFound';
 import Photo, { PhotosGrid } from '../components/Photo';
 import { UploadButton } from '../components/UploadButton';
-import { useAppState } from '../contexts/AppContext';
+import { useAppState, useDispatch } from '../contexts/AppContext';
 import { storage, db } from '../firebase/firebase-config';
+import actionTypes from '../constants/action-types';
 
 const Dashboard = () => {
     const rootRef = storage.ref().child('photos');
     const [loading, setLoading] = useState(false);
-    const [images, setImages] = useState([]);
     const [previewImageIndex, setPreviewIndex] = useState(null);
     const [isPreviewMode, togglePreviewMode] = useState(false);
     const [modalProps, setModalProps] = useState({});
-    const { currentUser } = useAppState();
+    const { currentUser, photos } = useAppState();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         fetchPhotos();
@@ -32,8 +33,8 @@ const Dashboard = () => {
                 querySnapshot.forEach(doc => {
                     console.log(doc.data())
                     arr.push(doc.data())
-                })
-                setImages(arr);
+                });
+                dispatch({ type: actionTypes.SET_PHOTOS, payload: arr });
                 setLoading(false);
             })
             .catch(err => {
@@ -135,7 +136,7 @@ const Dashboard = () => {
     }
 
     const deletePhoto = () => {
-        const imgName = images[previewImageIndex].name;
+        const imgName = photos[previewImageIndex].name;
         const imgRef = storage.ref().child(`photos/${currentUser.uid}/${imgName}`);
         imgRef.delete()
             .then(() => {
@@ -156,12 +157,12 @@ const Dashboard = () => {
 
     const deleteFromDB = () => {
         db.collection('users').doc(currentUser.uid)
-            .collection('photos').doc(images[previewImageIndex].name).delete()
+            .collection('photos').doc(photos[previewImageIndex].name).delete()
             .then(() => {
                 console.log('Doc deleted');
-                const imageItems = images;
-                imageItems.splice(previewImageIndex, 1);
-                setImages(imageItems);
+                const arr = photos;
+                arr.splice(previewImageIndex, 1);
+                dispatch({ type: actionTypes.SET_PHOTOS, payload: arr });
                 togglePreviewMode(false);
             })
             .catch(err => {
@@ -189,12 +190,12 @@ const Dashboard = () => {
 
     const showNextImage = () => {
         const nextIndex = previewImageIndex + 1;
-        setPreviewIndex(nextIndex >= images.length ? 0 : nextIndex);
+        setPreviewIndex(nextIndex >= photos.length ? 0 : nextIndex);
     }
 
     const showPrevImage = () => {
         const prevIndex = previewImageIndex - 1;
-        setPreviewIndex(prevIndex < 0 ? images.length - 1 : prevIndex);
+        setPreviewIndex(prevIndex < 0 ? photos.length - 1 : prevIndex);
 
     }
 
@@ -204,18 +205,19 @@ const Dashboard = () => {
             {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
             {isPreviewMode &&
                 <PreviewMode
-                    currentImage={images[previewImageIndex]}
+                    currentImage={photos[previewImageIndex]}
                     onClose={closePreview}
                     onNextAction={showNextImage}
                     onPrevAction={showPrevImage}
                     onDelete={deletePhoto}
+                    hideArrows={photos.length < 2}
                 />
             }
             <Navbar />
             {loading ?
                 <Loader /> :
                 <PhotosGrid >
-                    {images.length ? images.map((img, index) => {
+                    {photos.length ? photos.map((img, index) => {
                         return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
                     })
                         : <NoImagesFound />

@@ -8,7 +8,7 @@ const Root = styled.div`
     height: 100%;
     padding: 0px 15px;
     display: flex;
-    justify-content: space-between;
+    justify-content:${props => props.hideArrows ? `center` : `space-between`};
     align-items: center;
 `
 
@@ -18,7 +18,7 @@ const PreviewImage = styled.img`
     object-fit: contain;
 `;
 
-export default function PreviewMode({ currentImage, onClose, onDelete, onNextAction, onPrevAction }) {
+export default function PreviewMode({ hideArrows, currentImage, onClose, onDelete, onNextAction, onPrevAction }) {
 
     async function onDownload() {
         const imgSrc = await fetch(currentImage.url);
@@ -45,12 +45,12 @@ export default function PreviewMode({ currentImage, onClose, onDelete, onNextAct
             <span className="material-icons" onClick={onDownload} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '12px', right: '150px', cursor: 'pointer' }}>
                 download
             </span>
-            <Root>
-                <span className="material-icons" style={{ color: 'grey', fontSize: '65px', cursor: 'pointer', userSelect: 'none' }} onClick={onPrevAction}>
+            <Root hideArrows={hideArrows}>
+                <span className="material-icons" style={{ display: !hideArrows ? 'block' : 'none', color: 'grey', fontSize: '65px', cursor: 'pointer', userSelect: 'none' }} onClick={onPrevAction}>
                     arrow_back_ios
                 </span>
                 <PreviewImage src={currentImage.url} />
-                <span className="material-icons" style={{ color: 'grey', fontSize: '65px', cursor: 'pointer', userSelect: 'none' }} onClick={onNextAction}>
+                <span className="material-icons" style={{ display: !hideArrows ? 'block' : 'none', color: 'grey', fontSize: '65px', cursor: 'pointer', userSelect: 'none' }} onClick={onNextAction}>
                     arrow_forward_ios
                 </span>
             </Root>
@@ -59,6 +59,7 @@ export default function PreviewMode({ currentImage, onClose, onDelete, onNextAct
 }
 
 PreviewMode.propTypes = {
+    hideArrows: PropTypes.bool,
     currrentImage: PropTypes.string,
     onClose: PropTypes.func,
     onDelete: PropTypes.func,

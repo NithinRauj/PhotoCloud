@@ -1,9 +1,10 @@
 import actionTypes from "../constants/action-types";
 
-const { SET_CURRENT_USER } = actionTypes
+const { SET_CURRENT_USER, SET_PHOTOS } = actionTypes
 
 export const initialState = {
-    currentUser: {}
+    currentUser: {},
+    photos: []
 };
 
 export default function reducer(state, action) {
@@ -12,6 +13,11 @@ export default function reducer(state, action) {
             return {
                 ...state,
                 currentUser: action.payload
+            }
+        case SET_PHOTOS:
+            return {
+                ...state,
+                photos: action.payload
             }
         default:
             return state;
