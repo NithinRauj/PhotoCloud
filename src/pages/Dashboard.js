@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Lightbox from '../components/Lightbox';
+import PreviewMode from '../components/PreviewMode';
 import { Loader } from '../components/Loader';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
@@ -7,11 +7,10 @@ import NoImagesFound from '../components/NoImagesFound';
 import Photo, { PhotosGrid } from '../components/Photo';
 import { UploadButton } from '../components/UploadButton';
 import { useAppState } from '../contexts/AppContext';
-import { storage } from '../firebase/firebase-config';
+import { storage, db } from '../firebase/firebase-config';
 
 const Dashboard = () => {
-    const rootRef = storage.ref().child('images');
-    const [file, setFile] = useState(null);
+    const rootRef = storage.ref().child('photos');
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState([]);
     const [previewImageIndex, setPreviewIndex] = useState(null);
@@ -26,20 +25,20 @@ const Dashboard = () => {
 
     const fetchPhotos = () => {
         setLoading(true);
-        const dirRef = storage.ref().child(`images/${currentUser.uid}`);
-        dirRef.listAll()
-            .then(res => {
-                if (res.items.length > 0) {
-                    setImages([]);
-                    setImageItems(res);
-                } else {
-                    setImages([]);
-                    setLoading(false);
-                }
+        const arr = [];
+        db.collection('users').doc(currentUser.uid)
+            .collection('photos').get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    console.log(doc.data())
+                    arr.push(doc.data())
+                })
+                setImages(arr);
+                setLoading(false);
             })
             .catch(err => {
-                console.log('List images error', err);
-            });
+                console.log('Get Query Error', err);
+            })
     }
 
     const setModalProperties = (props) => {
@@ -48,29 +47,6 @@ const Dashboard = () => {
                 ...prevProps,
                 ...props
             }
-        });
-    }
-
-    const setImageItems = (res) => {
-        const totalItems = res.items.length
-        let count = 0;
-        res.items.forEach((img) => {
-            img.getDownloadURL()
-                .then((url) => {
-                    setImages(prevProps => {
-                        return [...prevProps, {
-                            name: img.name,
-                            url
-                        }]
-                    })
-                    count++;
-                    if (count === totalItems) {
-                        setLoading(false);
-                    }
-                })
-                .catch(err => {
-                    console.log('URL fetch error', err);
-                });
         });
     }
 
@@ -86,7 +62,6 @@ const Dashboard = () => {
             e.target.value = '';
             return;
         }
-        setFile(file);
         initiateUpload(e, file);
     }
 
@@ -127,15 +102,28 @@ const Dashboard = () => {
                     default:
                 }
             },
-            () => {
+            async () => {
                 e.target.value = '';
-                setModalProperties({
-                    isVisible: true,
-                    text: 'Upload Success',
-                    buttonText: 'Okay',
-                    onButtonClick: closeModal
-                });
-                fetchPhotos();
+                const url = await uploadTask.snapshot.ref.getDownloadURL();
+                db.collection('users').doc(currentUser.uid)
+                    .collection('photos').doc(file.name)
+                    .set({
+                        name: file.name,
+                        url
+                    })
+                    .then(() => {
+                        console.log('Document written successfully')
+                        setModalProperties({
+                            isVisible: true,
+                            text: 'Upload Success',
+                            buttonText: 'Okay',
+                            onButtonClick: closeModal
+                        });
+                        fetchPhotos();
+                    })
+                    .catch((err) => {
+                        console.log('DB error', err);
+                    })
             });
     }
 
@@ -148,14 +136,11 @@ const Dashboard = () => {
 
     const deletePhoto = () => {
         const imgName = images[previewImageIndex].name;
-        const imgRef = storage.ref().child(`images/${currentUser.uid}/${imgName}`);
+        const imgRef = storage.ref().child(`photos/${currentUser.uid}/${imgName}`);
         imgRef.delete()
             .then(() => {
                 console.log('Deleted the photo');
-                const imageItems = images;
-                imageItems.splice(previewImageIndex, 1);
-                setImages(imageItems);
-                togglePreviewMode(false);
+                deleteFromDB();
             })
             .catch((err) => {
                 console.log('Error deleting the photo', err);
@@ -167,6 +152,21 @@ const Dashboard = () => {
                     onButtonClick: closeModal
                 });
             });
+    }
+
+    const deleteFromDB = () => {
+        db.collection('users').doc(currentUser.uid)
+            .collection('photos').doc(images[previewImageIndex].name).delete()
+            .then(() => {
+                console.log('Doc deleted');
+                const imageItems = images;
+                imageItems.splice(previewImageIndex, 1);
+                setImages(imageItems);
+                togglePreviewMode(false);
+            })
+            .catch(err => {
+                console.log('DB deletion Error', err);
+            })
     }
 
     const closeModal = () => {
@@ -203,7 +203,7 @@ const Dashboard = () => {
         <>
             {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
             {isPreviewMode &&
-                <Lightbox
+                <PreviewMode
                     currentImage={images[previewImageIndex]}
                     onClose={closePreview}
                     onNextAction={showNextImage}
@@ -214,7 +214,7 @@ const Dashboard = () => {
             <Navbar />
             {loading ?
                 <Loader /> :
-                <PhotosGrid useAutoFit={images.length > 2}>
+                <PhotosGrid >
                     {images.length ? images.map((img, index) => {
                         return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
                     })

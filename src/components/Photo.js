@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export const PhotosGrid = styled.div`
     margin: 25px 25px 25px;
     display: grid;
-    grid-template-columns:${props => !props.useAutoFit ? `30% 30% 30%` : `repeat(auto-fit, minmax(350px, 1fr))`};
+    grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));
     grid-gap: 5px;
 `;
 

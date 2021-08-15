@@ -18,7 +18,7 @@ const PreviewImage = styled.img`
     object-fit: contain;
 `;
 
-export default function Lightbox({ currentImage, onClose, onDelete, onNextAction, onPrevAction }) {
+export default function PreviewMode({ currentImage, onClose, onDelete, onNextAction, onPrevAction }) {
 
     async function onDownload() {
         const imgSrc = await fetch(currentImage.url);
@@ -37,7 +37,7 @@ export default function Lightbox({ currentImage, onClose, onDelete, onNextAction
         <Overlay>
             <Text size={'x-base'} color={'grey'} style={{ position: 'absolute', top: '12px', left: '25px' }}>{currentImage.name}</Text>
             <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '50px', cursor: 'pointer' }}>
-                cancel
+                close
             </span>
             <span className="material-icons" onClick={onDelete} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '100px', cursor: 'pointer' }}>
                 delete
@@ -58,7 +58,7 @@ export default function Lightbox({ currentImage, onClose, onDelete, onNextAction
     )
 }
 
-Lightbox.propTypes = {
+PreviewMode.propTypes = {
     currrentImage: PropTypes.string,
     onClose: PropTypes.func,
     onDelete: PropTypes.func,

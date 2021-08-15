@@ -8,7 +8,7 @@ const Root = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 5%;
+    margin-top: 3%;
     img{
         width: 550px;
         height: 550px;
