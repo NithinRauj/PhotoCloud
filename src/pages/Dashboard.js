@@ -40,7 +40,6 @@ const Dashboard = () => {
             .collection('photos').get()
             .then(querySnapshot => {
                 querySnapshot.forEach(doc => {
-                    console.log(doc.data())
                     arr.push(doc.data())
                 });
                 dispatch({ type: actionTypes.SET_PHOTOS, payload: arr });
@@ -144,7 +143,8 @@ const Dashboard = () => {
         }
     }
 
-    const deletePhoto = () => {
+    const deletePhoto = (e) => {
+        e.stopPropagation();
         const imgName = photos[previewImageIndex].name;
         const imgRef = storage.ref().child(`photos/${currentUser.uid}/${imgName}`);
         imgRef.delete()
@@ -193,16 +193,19 @@ const Dashboard = () => {
         togglePreviewMode(true);
     }
 
-    const closePreview = () => {
+    const closePreview = (e) => {
+        e.stopPropagation();
         togglePreviewMode(false);
     }
 
-    const showNextImage = () => {
+    const showNextImage = (e) => {
+        e.stopPropagation();
         const nextIndex = previewImageIndex + 1;
         setPreviewIndex(nextIndex >= photos.length ? 0 : nextIndex);
     }
 
-    const showPrevImage = () => {
+    const showPrevImage = (e) => {
+        e.stopPropagation();
         const prevIndex = previewImageIndex - 1;
         setPreviewIndex(prevIndex < 0 ? photos.length - 1 : prevIndex);
 
