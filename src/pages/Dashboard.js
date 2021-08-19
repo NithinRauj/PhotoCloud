@@ -4,11 +4,20 @@ import { Loader } from '../components/Loader';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
 import NoImagesFound from '../components/NoImagesFound';
-import Photo, { PhotosGrid } from '../components/Photo';
+import Photo from '../components/Photo';
 import { UploadButton } from '../components/UploadButton';
 import { useAppState, useDispatch } from '../contexts/AppContext';
 import { storage, db } from '../firebase/firebase-config';
 import actionTypes from '../constants/action-types';
+import Masonry from 'react-masonry-css';
+import '../masonry.css';
+
+const BREAKPOINTS = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1
+};
 
 const Dashboard = () => {
     const rootRef = storage.ref().child('photos');
@@ -141,11 +150,11 @@ const Dashboard = () => {
         imgRef.delete()
             .then(() => {
                 console.log('Deleted the photo');
+                togglePreviewMode(false);
                 deleteFromDB();
             })
             .catch((err) => {
                 console.log('Error deleting the photo', err);
-                togglePreviewMode(false);
                 setModalProperties({
                     isVisible: true,
                     text: `Delete Failed.Please try again`,
@@ -215,14 +224,18 @@ const Dashboard = () => {
             }
             <Navbar />
             {loading ?
-                <Loader /> :
-                <PhotosGrid >
-                    {photos.length ? photos.map((img, index) => {
-                        return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
-                    })
-                        : <NoImagesFound />
-                    }
-                </PhotosGrid>}
+                <Loader /> : <>
+                    {photos.length ?
+                        <Masonry
+                            breakpointCols={BREAKPOINTS}
+                            className="my-masonry-grid"
+                            columnClassName="my-masonry-grid_column">
+                            {photos.map((img, index) => {
+                                return <Photo src={img.url} alt={img.name} key={img.name} onClickAction={() => openPreview(index)} />
+                            })}
+                        </Masonry> : <NoImagesFound />}
+                </>
+            }
             <input type='file' id='upload-btn' accept={'.jpg,.png'} hidden onChange={onFileSelect} />
             <UploadButton htmlFor='upload-btn'><span className="material-icons">file_upload</span> Upload </UploadButton>
         </>

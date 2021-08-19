@@ -10,7 +10,21 @@ const Root = styled.div`
     display: flex;
     justify-content:${props => props.hideArrows ? `center` : `space-between`};
     align-items: center;
-`
+`;
+
+const Title = styled.div`
+${Text}{
+    position: absolute;
+    top: 12px; 
+    left: 25px;
+}
+    @media (max-width:600px){
+        ${Text}{
+        top: 90%;
+        left: 25px;
+        }
+    }
+`;
 
 const PreviewImage = styled.img`
     width:55%;
@@ -35,7 +49,9 @@ export default function PreviewMode({ hideArrows, currentImage, onClose, onDelet
 
     return (
         <Overlay>
-            <Text size={'x-base'} color={'grey'} style={{ position: 'absolute', top: '12px', left: '25px' }}>{currentImage.name}</Text>
+            <Title>
+                <Text size={'x-base'} color={'grey'}>{currentImage.name}</Text>
+            </Title>
             <span className="material-icons" onClick={onClose} style={{ color: 'grey', fontSize: '30px', position: 'absolute', top: '10px', right: '50px', cursor: 'pointer' }}>
                 close
             </span>
