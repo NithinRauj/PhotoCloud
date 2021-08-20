@@ -79,10 +79,11 @@ const Dashboard = () => {
         const uploadTask = imageRef.put(file);
         uploadTask.on('state_changed', (snapshot) => {
             const progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 100);
-            console.log('Uploading', progress);
             setModalProperties({
                 isVisible: true,
                 text: `Uploading ${progress}%`,
+                showProgressBar: true,
+                progressNumber: progress.toString(),
                 buttonText: 'Stop',
                 onButtonClick: () => stopUpload(uploadTask)
             });
@@ -95,6 +96,7 @@ const Dashboard = () => {
                     case 'storage/unknown':
                         setModalProperties({
                             isVisible: true,
+                            showProgressBar: false,
                             text: `Upload Failed`,
                             buttonText: 'Okay',
                             onButtonClick: closeModal
@@ -103,6 +105,7 @@ const Dashboard = () => {
                     case 'storage/canceled':
                         setModalProperties({
                             isVisible: true,
+                            showProgressBar: false,
                             text: `Upload Cancelled`,
                             buttonText: 'Okay',
                             onButtonClick: closeModal
@@ -124,6 +127,7 @@ const Dashboard = () => {
                         console.log('Document written successfully')
                         setModalProperties({
                             isVisible: true,
+                            showProgressBar: false,
                             text: 'Upload Success',
                             buttonText: 'Okay',
                             onButtonClick: closeModal
@@ -211,10 +215,10 @@ const Dashboard = () => {
 
     }
 
-    const { isVisible, text, buttonText, onButtonClick } = modalProps;
+    const { isVisible } = modalProps;
     return (
         <>
-            {isVisible ? <Modal text={text} buttonText={buttonText} onButtonClick={onButtonClick} /> : null}
+            {isVisible ? <Modal {...modalProps} /> : null}
             {isPreviewMode &&
                 <PreviewMode
                     currentImage={photos[previewImageIndex]}

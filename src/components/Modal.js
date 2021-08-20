@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from './Text';
 import Button from './Button';
+import ProgressBar from './ProgressBar';
 
 export const Overlay = styled.div`
     width: 100vw;
@@ -29,11 +30,12 @@ const Root = styled.div`
     text-align: center;
 `;
 
-const Modal = ({ text, buttonText, onButtonClick }) => {
+const Modal = ({ text, buttonText, onButtonClick, progressNumber, showProgressBar = false }) => {
     return (
         <Overlay>
             <Root>
                 <Text size={'base'}>{text}</Text>
+                {showProgressBar && <ProgressBar progressNumber={progressNumber} />}
                 <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
             </Root>
         </Overlay>
@@ -41,6 +43,7 @@ const Modal = ({ text, buttonText, onButtonClick }) => {
 }
 
 Modal.propTypes = {
+    progressNumber: PropTypes.number,
     text: PropTypes.string,
     buttonText: PropTypes.string,
     onButtonClick: PropTypes.func
