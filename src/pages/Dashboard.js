@@ -24,7 +24,6 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false);
     const [previewImageIndex, setPreviewIndex] = useState(null);
     const [isPreviewMode, togglePreviewMode] = useState(false);
-    const [modalProps, setModalProps] = useState({});
     const { currentUser, photos } = useAppState();
     const dispatch = useDispatch();
 
@@ -51,12 +50,7 @@ const Dashboard = () => {
     }
 
     const setModalProperties = (props) => {
-        setModalProps(prevProps => {
-            return {
-                ...prevProps,
-                ...props
-            }
-        });
+        dispatch({ type: actionTypes.SET_MODAL_PROPS, payload: props })
     }
 
     const onFileSelect = (e) => {
@@ -184,11 +178,8 @@ const Dashboard = () => {
     }
 
     const closeModal = () => {
-        setModalProps(prevProps => {
-            return {
-                ...prevProps,
-                isVisible: false
-            }
+        setModalProperties({
+            isVisible: false
         });
     }
 
@@ -215,10 +206,9 @@ const Dashboard = () => {
 
     }
 
-    const { isVisible } = modalProps;
     return (
         <>
-            {isVisible ? <Modal {...modalProps} /> : null}
+            <Modal />
             {isPreviewMode &&
                 <PreviewMode
                     currentImage={photos[previewImageIndex]}

@@ -1,9 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from './Text';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
+import Input from './Input';
+import { useAppState } from '../contexts/AppContext';
 
 export const Overlay = styled.div`
     width: 100vw;
@@ -30,23 +31,24 @@ const Root = styled.div`
     text-align: center;
 `;
 
-const Modal = ({ text, buttonText, onButtonClick, progressNumber, showProgressBar = false }) => {
-    return (
-        <Overlay>
-            <Root>
-                <Text size={'base'}>{text}</Text>
-                {showProgressBar && <ProgressBar progressNumber={progressNumber} />}
-                <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
-            </Root>
-        </Overlay>
-    )
-}
+const Modal = () => {
 
-Modal.propTypes = {
-    progressNumber: PropTypes.number,
-    text: PropTypes.string,
-    buttonText: PropTypes.string,
-    onButtonClick: PropTypes.func
+    const { modalProps } = useAppState();
+    const { isVisible, text, buttonText, onButtonClick, progressNumber, showProgressBar = false, showTitleField = false } = modalProps;
+    return (
+        <>
+            {isVisible &&
+                <Overlay>
+                    <Root>
+                        <Text size={'base'}>{text}</Text>
+                        {showProgressBar && <ProgressBar progressNumber={progressNumber} />}
+                        {showTitleField && <Input type='text' name='title' placeholder='Enter album name' />}
+                        <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
+                    </Root>
+                </Overlay>
+            }
+        </>
+    )
 }
 
 export default Modal

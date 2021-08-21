@@ -1,10 +1,11 @@
 import actionTypes from "../constants/action-types";
 
-const { SET_CURRENT_USER, SET_PHOTOS } = actionTypes
+const { SET_CURRENT_USER, SET_PHOTOS, SET_MODAL_PROPS } = actionTypes
 
 export const initialState = {
     currentUser: {},
-    photos: []
+    photos: [],
+    modalProps: {}
 };
 
 export default function reducer(state, action) {
@@ -18,6 +19,11 @@ export default function reducer(state, action) {
             return {
                 ...state,
                 photos: action.payload
+            }
+        case SET_MODAL_PROPS:
+            return {
+                ...state,
+                modalProps: action.payload
             }
         default:
             return state;
