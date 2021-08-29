@@ -201,6 +201,7 @@ const Dashboard = () => {
             })
             .then(() => {
                 toggleCreateAlbumModal();
+                fetchPhotos(title);
             })
             .catch(err => {
                 console.log('Album creation failed', err);
