@@ -201,7 +201,6 @@ const Dashboard = () => {
             })
             .then(() => {
                 toggleCreateAlbumModal();
-                window.location.reload();
             })
             .catch(err => {
                 console.log('Album creation failed', err);

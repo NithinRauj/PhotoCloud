@@ -6,6 +6,7 @@ import { auth, db } from '../firebase/firebase-config';
 import Text from './Text';
 import AlbumOption, { AlbumList, AlbumsContainer } from './AlbumOption';
 import { useAppState } from '../contexts/AppContext';
+import { Backdrop } from './Backdrop';
 
 const NavRoot = styled.div`
     width: 100%;
@@ -28,12 +29,12 @@ const Navbar = ({ openModal, onAlbumClick }) => {
     const history = useHistory();
     const [isOpen, setIsOpen] = useState(false);
     const [albums, setAlbums] = useState([]);
-    const { currentUser } = useAppState();
+    const { currentUser, photosPath } = useAppState();
 
     useEffect(() => {
         getAlbums();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [photosPath])
 
     const signOut = async () => {
         try {
@@ -76,6 +77,7 @@ const Navbar = ({ openModal, onAlbumClick }) => {
                     <AlbumOption name={'Create Album'} isCreateOption={true} onCreate={openModal} />
                 </AlbumList>
             </AlbumsContainer>
+            {isOpen && <Backdrop onClick={() => setIsOpen(false)} />}
             <Text size={'xs'} color={'lightShade'} cursor={'pointer'} onClick={() => history.push('/update-profile')}>My Profile</Text>
             <Text size={'xs'} color={'lightShade'} cursor={'pointer'} onClick={signOut}>Signout</Text>
         </NavRoot>
