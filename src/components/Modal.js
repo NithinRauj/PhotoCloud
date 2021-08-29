@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Text from './Text';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
-import Input from './Input';
 import { useAppState } from '../contexts/AppContext';
 
 export const Overlay = styled.div`
@@ -14,7 +13,7 @@ export const Overlay = styled.div`
     z-index: 10;
 `;
 
-const Root = styled.div`
+export const ModalRoot = styled.div`
     position: absolute;
     left: 50%;
     top: 50%;
@@ -32,19 +31,18 @@ const Root = styled.div`
 `;
 
 const Modal = () => {
-
     const { modalProps } = useAppState();
-    const { isVisible, text, buttonText, onButtonClick, progressNumber, showProgressBar = false, showTitleField = false } = modalProps;
+    const { isVisible, text, buttonText, onButtonClick, progressNumber, showProgressBar = false } = modalProps;
+
     return (
         <>
             {isVisible &&
                 <Overlay>
-                    <Root>
+                    <ModalRoot>
                         <Text size={'base'}>{text}</Text>
                         {showProgressBar && <ProgressBar progressNumber={progressNumber} />}
-                        {showTitleField && <Input type='text' name='title' placeholder='Enter album name' />}
                         <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
-                    </Root>
+                    </ModalRoot>
                 </Overlay>
             }
         </>

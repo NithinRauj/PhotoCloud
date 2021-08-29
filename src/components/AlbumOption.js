@@ -19,6 +19,7 @@ export const AlbumList = styled.div`
 
 export const AlbumsContainer = styled.div`
     position: relative;
+    user-select: none;
     -webkit-user-select: none;
 `;
 
@@ -39,8 +40,8 @@ const Option = styled.div`
     transition: 0.3s background-color;
     `;
 
-const AlbumOption = ({ name, isCreateOption, onCreate }) => {
-    return <Option onClick={onCreate}>
+const AlbumOption = ({ name, isCreateOption, onCreate, onSelect }) => {
+    return <Option onClick={isCreateOption ? onCreate : onSelect}>
         {isCreateOption && <span className="material-icons">
             create_new_folder
         </span>}

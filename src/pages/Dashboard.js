@@ -11,6 +11,8 @@ import { storage, db } from '../firebase/firebase-config';
 import actionTypes from '../constants/action-types';
 import Masonry from 'react-masonry-css';
 import '../masonry.css';
+import CreateAlbumModal from '../components/CreateAlbumModal';
+import Text from '../components/Text';
 
 const BREAKPOINTS = {
     default: 4,
@@ -23,8 +25,9 @@ const Dashboard = () => {
     const rootRef = storage.ref().child('photos');
     const [loading, setLoading] = useState(false);
     const [previewImageIndex, setPreviewIndex] = useState(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
     const [isPreviewMode, togglePreviewMode] = useState(false);
-    const { currentUser, photos } = useAppState();
+    const { currentUser, photos, photosPath } = useAppState();
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -32,16 +35,18 @@ const Dashboard = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const fetchPhotos = () => {
+    const fetchPhotos = (name = 'root') => {
         setLoading(true);
         const arr = [];
-        db.collection('users').doc(currentUser.uid)
-            .collection('photos').get()
+        const photosRef = name === 'root' ? db.collection('users').doc(currentUser.uid).collection('photos')
+            : db.collection('users').doc(currentUser.uid).collection('albums').doc(name).collection('photos')
+        photosRef.get()
             .then(querySnapshot => {
                 querySnapshot.forEach(doc => {
                     arr.push(doc.data())
                 });
                 dispatch({ type: actionTypes.SET_PHOTOS, payload: arr });
+                dispatch({ type: actionTypes.SET_PHOTOS_PATH, payload: !name ? 'root' : name });
                 setLoading(false);
             })
             .catch(err => {
@@ -69,7 +74,8 @@ const Dashboard = () => {
     }
 
     const initiateUpload = (e, file) => {
-        const imageRef = rootRef.child(`${currentUser.uid}/${file.name}`);
+        const path = photosPath === 'root' ? `${currentUser.uid}/${file.name}` : `${currentUser.uid}/albums/${photosPath}/${file.name}`;
+        const imageRef = rootRef.child(path);
         const uploadTask = imageRef.put(file);
         uploadTask.on('state_changed', (snapshot) => {
             const progress = Math.floor(snapshot.bytesTransferred / snapshot.totalBytes * 100);
@@ -111,12 +117,12 @@ const Dashboard = () => {
             async () => {
                 e.target.value = '';
                 const url = await uploadTask.snapshot.ref.getDownloadURL();
-                db.collection('users').doc(currentUser.uid)
-                    .collection('photos').doc(file.name)
-                    .set({
-                        name: file.name,
-                        url
-                    })
+                const photosRef = photosPath === 'root' ? db.collection('users').doc(currentUser.uid)
+                    : db.collection('users').doc(currentUser.uid).collection('albums').doc(photosPath)
+                photosRef.collection('photos').add({
+                    name: file.name,
+                    url
+                })
                     .then(() => {
                         console.log('Document written successfully')
                         setModalProperties({
@@ -126,7 +132,7 @@ const Dashboard = () => {
                             buttonText: 'Okay',
                             onButtonClick: closeModal
                         });
-                        fetchPhotos();
+                        fetchPhotos(photosPath);
                     })
                     .catch((err) => {
                         console.log('DB error', err);
@@ -144,7 +150,8 @@ const Dashboard = () => {
     const deletePhoto = (e) => {
         e.stopPropagation();
         const imgName = photos[previewImageIndex].name;
-        const imgRef = storage.ref().child(`photos/${currentUser.uid}/${imgName}`);
+        const path = photosPath === 'root' ? `${currentUser.uid}/${imgName}` : `${currentUser.uid}/albums/${photosPath}/${imgName}`;
+        const imgRef = storage.ref().child(path);
         imgRef.delete()
             .then(() => {
                 console.log('Deleted the photo');
@@ -163,8 +170,9 @@ const Dashboard = () => {
     }
 
     const deleteFromDB = () => {
-        db.collection('users').doc(currentUser.uid)
-            .collection('photos').doc(photos[previewImageIndex].name).delete()
+        const photosRef = photosPath === 'root' ? db.collection('users').doc(currentUser.uid)
+            : db.collection('users').doc(currentUser.uid).collection('albums').doc(photosPath)
+        photosRef.collection('photos').doc(photos[previewImageIndex].name).delete()
             .then(() => {
                 console.log('Doc deleted');
                 const arr = photos;
@@ -175,6 +183,30 @@ const Dashboard = () => {
             .catch(err => {
                 console.log('DB deletion Error', err);
             })
+    }
+
+    const toggleCreateAlbumModal = () => {
+        setShowCreateModal(!showCreateModal);
+    }
+
+    const onAlbumClick = (name) => {
+        fetchPhotos(name);
+    }
+
+    const initializeAlbum = (title) => {
+        db.collection('users').doc(currentUser.uid)
+            .collection('albums').doc(title)
+            .set({
+                name: title
+            })
+            .then(() => {
+                toggleCreateAlbumModal();
+                window.location.reload();
+            })
+            .catch(err => {
+                console.log('Album creation failed', err);
+                toggleCreateAlbumModal();
+            });
     }
 
     const closeModal = () => {
@@ -209,6 +241,7 @@ const Dashboard = () => {
     return (
         <>
             <Modal />
+            {showCreateModal && <CreateAlbumModal onCreate={initializeAlbum} onCancel={toggleCreateAlbumModal} />}
             {isPreviewMode &&
                 <PreviewMode
                     currentImage={photos[previewImageIndex]}
@@ -219,7 +252,15 @@ const Dashboard = () => {
                     hideArrows={photos.length < 2}
                 />
             }
-            <Navbar />
+            <Navbar openModal={toggleCreateAlbumModal} onAlbumClick={onAlbumClick} />
+            {photosPath !== 'root' &&
+                (<><Text onClick={() => {
+                    fetchPhotos('root');
+                }}><span className="material-icons" style={{ padding: '15px 0px 0px 15px', verticalAlign: 'bottom' }}>
+                        arrow_back
+                    </span>Go Back</Text>
+                    <Text margin={'0px 0px 0px 40px'}>{`Currently Viewing: ${photosPath}`}</Text>
+                </>)}
             {loading ?
                 <Loader /> : <>
                     {photos.length ?

@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { auth } from '../firebase/firebase-config';
+import { auth, db } from '../firebase/firebase-config';
 import Text from './Text';
 import AlbumOption, { AlbumList, AlbumsContainer } from './AlbumOption';
-import { useDispatch } from '../contexts/AppContext';
-import actionTypes from '../constants/action-types';
+import { useAppState } from '../contexts/AppContext';
 
 const NavRoot = styled.div`
-    width:100%;
-    height:50px;
+    width: 100%;
+    height: 50px;
     background-color: ${props => props.theme.color.darkShade};
     display: flex;
     justify-content: flex-start;
@@ -19,16 +18,22 @@ const NavRoot = styled.div`
         margin-right: auto;
     }
     & > ${Text}{
-        padding:0px 5px;
-        margin:0px 25px;
+        padding: 0px 5px;
+        margin: 0px 25px;
     }
 `;
 
 
-const Navbar = () => {
+const Navbar = ({ openModal, onAlbumClick }) => {
     const history = useHistory();
     const [isOpen, setIsOpen] = useState(false);
-    const dispatch = useDispatch();
+    const [albums, setAlbums] = useState([]);
+    const { currentUser } = useAppState();
+
+    useEffect(() => {
+        getAlbums();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const signOut = async () => {
         try {
@@ -43,22 +48,19 @@ const Navbar = () => {
         setIsOpen(!isOpen);
     }
 
-    const initializeAlbum = () => {
-        setModalProperties({ isVisible: false });
-    }
-
-    const setModalProperties = (props) => {
-        dispatch({ type: actionTypes.SET_MODAL_PROPS, payload: props })
-    }
-
-    const createAlbum = () => {
-        setModalProperties({
-            isVisible: true,
-            showTitleField: true,
-            text: `Create Album`,
-            buttonText: 'Create',
-            onButtonClick: initializeAlbum
-        });
+    const getAlbums = () => {
+        const albumsRef = db.collection('users').doc(currentUser.uid).collection('albums');
+        albumsRef.get().then(querySnapshot => {
+            const arr = [];
+            querySnapshot.forEach(doc => {
+                arr.push(doc.data());
+            })
+            setAlbums(arr);
+            console.log(arr)
+        })
+            .catch(err => {
+                console.log('Albums fetch error', err);
+            })
     }
 
     return (
@@ -70,10 +72,8 @@ const Navbar = () => {
                     arrow_drop_down
                 </span>
                 <AlbumList style={{ display: isOpen ? 'flex' : 'none' }}>
-                    <AlbumOption name={'Album 1'} />
-                    <AlbumOption name={'Album 2'} />
-                    <AlbumOption name={'Album 3'} />
-                    <AlbumOption name={'Create Album'} isCreateOption={true} onCreate={createAlbum} />
+                    {albums.map((album, index) => <AlbumOption key={index} name={album.name} onSelect={() => onAlbumClick(album.name)} />)}
+                    <AlbumOption name={'Create Album'} isCreateOption={true} onCreate={openModal} />
                 </AlbumList>
             </AlbumsContainer>
             <Text size={'xs'} color={'lightShade'} cursor={'pointer'} onClick={() => history.push('/update-profile')}>My Profile</Text>
