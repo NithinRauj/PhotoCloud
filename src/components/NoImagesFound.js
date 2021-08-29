@@ -8,7 +8,7 @@ const Root = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 5%;
+    margin-top: 3%;
     img{
         width: 550px;
         height: 550px;
@@ -18,7 +18,7 @@ const Root = styled.div`
 const NoImagesFound = props => {
     return (
         <Root>
-            <Text>No Photos found.Upload a photo by clicking on the <b>Upload</b> button</Text>
+            <Text>No Photos found. Upload a photo by clicking on the <b>Upload</b> button</Text>
             <img src={notFound} alt='no images found' />
         </Root>
     )

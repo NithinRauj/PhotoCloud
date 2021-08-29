@@ -1,8 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from './Text';
 import Button from './Button';
+import ProgressBar from './ProgressBar';
+import { useAppState } from '../contexts/AppContext';
 
 export const Overlay = styled.div`
     width: 100vw;
@@ -12,7 +13,7 @@ export const Overlay = styled.div`
     z-index: 10;
 `;
 
-const Root = styled.div`
+export const ModalRoot = styled.div`
     position: absolute;
     left: 50%;
     top: 50%;
@@ -29,21 +30,23 @@ const Root = styled.div`
     text-align: center;
 `;
 
-const Modal = ({ text, buttonText, onButtonClick }) => {
-    return (
-        <Overlay>
-            <Root>
-                <Text size={'base'}>{text}</Text>
-                <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
-            </Root>
-        </Overlay>
-    )
-}
+const Modal = () => {
+    const { modalProps } = useAppState();
+    const { isVisible, text, buttonText, onButtonClick, progressNumber, showProgressBar = false } = modalProps;
 
-Modal.propTypes = {
-    text: PropTypes.string,
-    buttonText: PropTypes.string,
-    onButtonClick: PropTypes.func
+    return (
+        <>
+            {isVisible &&
+                <Overlay>
+                    <ModalRoot>
+                        <Text size={'base'}>{text}</Text>
+                        {showProgressBar && <ProgressBar progressNumber={progressNumber} />}
+                        <Button width={'150px'} height={'40px'} text={buttonText} bgColor={'darkAccent'} onClick={onButtonClick} />
+                    </ModalRoot>
+                </Overlay>
+            }
+        </>
+    )
 }
 
 export default Modal
